@@ -13,12 +13,25 @@ Route::get('/', function () {
     return view('home',['title' => 'Home Page']);
 });
 
+Route::get('/login', function () {
+    return view('login');
+});
+
+Route::get('/profile', function () {
+    return view('profile',['title' => 'Your Profile']);
+});
+
+Route::get('/settings', function () {
+    return view('settings',['title' => 'Settings Your Profile']);
+});
+
 Route::get('/about', function () {
     return view('about',['title' => 'About Page']);
 });
 
 Route::get('/posts', function () {
-    return view('posts',['title' => 'Blog Page', 'posts' => Post::all()]);
+    return view('posts',['title' => 'Blog Page', 'posts' =>
+    Post::filter(request(['search', 'category', 'author' ]))->latest()->get()]);
 });
 
 Route::get('/posts/{post:slug}', function (Post $post) {
@@ -29,6 +42,8 @@ Route::get('/posts/{post:slug}', function (Post $post) {
 });
 
 Route::get('/authors/{user:username}', function (User $user) {
+    // $post = $user->posts->load('category', 'author');
+
     return view('posts', [
         'title' => count($user->posts) . ' Articles by ' . $user->name,
         'posts' => $user->posts
@@ -36,12 +51,16 @@ Route::get('/authors/{user:username}', function (User $user) {
 });
 
 Route::get('/categories/{category:slug}', function (Category $category) {
+    // $post = $category->posts->load('category', 'author');
+    
     return view('posts', [
         'title' => 'Articles in ' . $category->name,
-        'posts' => $category->posts
+        'posts' => $category->posts 
     ]);
 });
 
 Route::get('/contact', function () {
     return view('contact',['title' => 'Contact Page']);
 });
+
+
